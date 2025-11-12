@@ -1,11 +1,23 @@
 body {
-
+    background-color: blanchedalmond
 }
 
 main {
-    font-family: ;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
 }
 
 header {
+    display: flex;
+    font-size: 200%;
+    justify-content: right
+}
 
+.header_button {
+    background-color: aqua;
+}
+
+.header_button:hover {
+    cursor: pointer;
+    transition: color 3s, background-color 0.5s;
+    background-color: blue;
 }

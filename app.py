@@ -1,11 +1,14 @@
-from fastapi import FastAPI, Request, UploadFile, File, HTTPException
-from fastapi.staticfiles import StaticFiles
-from fastapi.responses import FileResponse, HTMLResponse, JSONResponse
-from fastapi.templating import Jinja2Templates
-from pathlib import Path
 import shutil
+from pathlib import Path
+
+from fastapi import FastAPI, File, HTTPException, Request, UploadFile
+from fastapi.responses import FileResponse, HTMLResponse, JSONResponse
+from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
 
 BASE_DIR = Path(__file__).resolve().parent
+
+print(BASE_DIR)
 
 app = FastAPI(title="FastAPI Simple Static + API")
 

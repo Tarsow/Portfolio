@@ -1,4 +1,2 @@
-# api/index.py — Vercel serverless entrypoint
-# exports the ASGI FastAPI instance named `app` from app.py
-
+# Vercel serverless entrypoint: export the FastAPI ASGI app
 from app import app
