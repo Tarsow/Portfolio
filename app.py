@@ -1,62 +1,30 @@
-import shutil
-from pathlib import Path
-
-from fastapi import FastAPI, File, HTTPException, Request, UploadFile
-from fastapi.responses import FileResponse, HTMLResponse, JSONResponse
+# app.py
+from typing import Union
+from fastapi import FastAPI, Request
+from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
-BASE_DIR = Path(__file__).resolve().parent
+app = FastAPI()
 
-print(BASE_DIR)
+# monta a pasta public/ em /static
+app.mount("/static", StaticFiles(directory="public"), name="static")
 
-app = FastAPI(title="FastAPI Simple Static + API")
-
-# mount static directory at /static
-app.mount("/static", StaticFiles(directory=BASE_DIR / "static"), name="static")
-
-templates = Jinja2Templates(directory=str(BASE_DIR / "templates"))
+# configurar templates (pasta templates/)
+templates = Jinja2Templates(directory="templates")
 
 
-@app.get("/", response_class=HTMLResponse)
-async def index(request: Request):
-    """
-    Render a simple template that references a static CSS file.
-    """
+@app.get("/")
+def index(request: Request):
+    # renderiza templates/index.html
     return templates.TemplateResponse("index.html", {"request": request})
 
 
-@app.get("/download", response_class=FileResponse)
-async def download_example():
-    """
-    Return a file from the static folder for download.
-    """
-    file_path = BASE_DIR / "static" / "example.txt"
-    if not file_path.exists():
-        raise HTTPException(status_code=404, detail="File not found")
-    # FileResponse will stream the file efficiently
-    return FileResponse(path=file_path, filename="example.txt", media_type="text/plain")
+@app.get("/api/{api_name}")
+def interact_api(api_name, q:str = "nothing"):
+    return JSONResponse({"api_name": api_name, "q": q})
 
 
-@app.post("/api/echo")
-async def api_echo(payload: dict):
-    """
-    Simple JSON echo endpoint to test API behavior.
-    """
-    return JSONResponse({"echo": payload})
-
-
-@app.post("/upload")
-async def upload_file(file: UploadFile = File(...)):
-    """
-    Accept an uploaded file and save it under static/uploads/.
-    Useful to test multipart/form-data uploads.
-    """
-    uploads_dir = BASE_DIR / "static" / "uploads"
-    uploads_dir.mkdir(parents=True, exist_ok=True)
-
-    dest = uploads_dir / file.filename
-    with dest.open("wb") as buffer:
-        shutil.copyfileobj(file.file, buffer)
-
-    return {"filename": file.filename, "saved_to": str(dest.relative_to(BASE_DIR))}
+@app.get("/api/items/{item_id}")
+def read_item(item_id: int, q: Union[str, None] = None):
+    return JSONResponse({"item_id": item_id, "q": q})
