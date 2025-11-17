@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>{{ client.name }}</title>
+    <link rel="stylesheet" href="/static/css/style.css" />
+    <style>
+      /* small example using client theme color */
+      .hero { background-color: {{ client.theme_color }}; padding: 2rem; border-radius: 6px; }
+    </style>
+  </head>
+  <body>
+    <header>
+      <a href="/">Home</a>
+    </header>
+
+    <main>
+      <section class="hero">
+        <h1>{{ client.name }}</h1>
+        <p>{{ client.bio }}</p>
+      </section>
+
+      <section>
+        <h2>Debug info (server-side)</h2>
+        <ul>
+          <li>Client id: {{ client_id }}</li>
+          <li>User-Agent header: {{ request.headers.get('user-agent') }}</li>
+          <li>Cookies: {{ request.cookies }}</li>
+        </ul>
+      </section>
+    </main>
+
+    <script src="/static/js/script.js"></script>
+  </body>
+</html>
