@@ -1,10 +1,11 @@
 # app.py
 from typing import Union
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, Response
 from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from utils import *
+from datetime import datetime
 
 
 
@@ -22,6 +23,50 @@ def index(request: Request):
     # renderiza templates/index.html
     return templates.TemplateResponse("index.html", {"request": request})
 
+@app.get("/robots.txt", response_class=Response)
+def robots():
+    content = (
+        "User-agent: *\n"
+        "Allow: /\n"
+        "Sitemap: https://tarsow.dev/sitemap.xml\n"
+    )
+    return Response(content, media_type="text/plain")
+
+@app.get("/ads.txt", response_class=Response)
+def ads():
+    content = (
+        "google.com, pub-0000000000000000, DIRECT, f08c47fec0942fa0\n"
+    )
+    return Response(content, media_type="text/plain")
+
+@app.get("/sitemap.xml", response_class=Response)
+def sitemap():
+    base_url = "https://tarsow.dev"
+
+    urls = [
+        "/",
+        "progress-knight"
+    ]
+
+    xml_items = ""
+    now = datetime.utcnow().strftime("%Y-%m-%d")
+
+    for url in urls:
+        xml_items += f"""
+    <url>
+        <loc>{base_url}{url}</loc>
+        <lastmod>{now}</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.8</priority>
+    </url>"""
+
+    xml = f"""<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+{xml_items}
+</urlset>
+"""
+
+    return Response(content=xml, media_type="application/xml")
 
 @app.get("/progress-monster")
 def progress_monster(request: Request):
